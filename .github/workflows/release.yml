@@ -1,0 +1,47 @@
+name: Release
+permissions:
+ contents: write
+on:
+ pull_request:
+   types: [closed]
+   branches: ["main"]
+jobs:
+ release:
+   runs-on: ubuntu-latest
+   if: github.event.pull_request.merged == true
+   steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+    
+        - name: Setup uv
+          uses: ./.github/actions/setup-uv
+
+        - name: get version
+          run: |
+            VERSION=$(uvx --from=toml-cli toml get project.version --toml-path pyproject.toml)
+            echo "VERSION=$VERSION" >> $GITHUB_ENV
+        
+        - name: show version  
+          run: echo "Retrieved version $VERSION from pyproject.toml"
+          env:
+            VERSION: ${{ env.VERSION }}
+
+        - name: Configure Git
+          run: |
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git config --global user.name "github-actions[bot]"
+
+        - name: Create and push tag
+          run: |
+            git tag "v${VERSION}"
+            git push origin "v${VERSION}"
+          env:
+            VERSION: ${{ env.VERSION }}
+          
+        - name: Update major version tag
+          run: |
+            MAJOR=$(echo "$VERSION" | cut -d. -f1)
+            git tag -fa "v${MAJOR}" -m "Update v${MAJOR} tag to v${VERSION}"
+            git push --force origin "v${MAJOR}"
+          env:
+            VERSION: ${{ env.VERSION }}
