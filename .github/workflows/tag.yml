@@ -1,0 +1,35 @@
+name: Tag on Merge to Main
+
+on:
+    pull_request:
+        branches:
+            - main  # Adjust the branch name as needed
+        types: [closed]
+
+jobs:
+  tag_release:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Setup Python with Poetry
+          uses: ./.github/actions/setup-python-poetry
+          with:
+            python-version: '3.10'
+
+        - name: Check if tag already exists
+          id: check_tag
+          run: |
+            version=$(poetry version | cut -d' ' -f2)
+            if git rev-parse "v$version" >/dev/null 2>&1; then
+              echo "::error::Tag v$version already exists on GitHub. Please bump the version in pyproject.toml."
+              exit 1
+            fi
+
+        - name: Create and push new tag
+          if: success()
+          run: |
+            version=$(poetry version | cut -d' ' -f2)
+            git tag -a "v$version" -m "Release version $version"
+            git push origin "v$version"
