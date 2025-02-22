@@ -162,7 +162,7 @@ to main then the tag-and-release.yml workflow will fail.
    poetry version <bump-rule>
    ```
 
-Provide a valid bump rule: patch, minor, major, prepatch, preminor, premajor, prerelease.
+   Provide a valid bump rule: patch, minor, major, prepatch, preminor, premajor, prerelease.
 
 ## CI/CD Workflows
 
@@ -183,7 +183,3 @@ This project uses GitHub Actions for continuous integration and deployment.
 ## Acknowledgments
 
 This implementation is based on *Fluent Python (2nd edition)* by Luciano Ramalho.
-
-
-
-
