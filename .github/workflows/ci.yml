@@ -12,10 +12,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Get Python version
+        id: python-version
+        run: |
+          echo "version=$(head -n 1 .python-versions)" >> $GITHUB_OUTPUT
+
       - name: Setup Python with Poetry
         uses: ./.github/actions/setup-python-poetry
         with:
-          python-version: '3.10'
+          python-version: ${{ steps.python-version.outputs.version }}
 
       - name: Run tests
         run: poetry run pre-commit run --all-files
@@ -26,10 +31,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ${{ fromJSON(steps.get-test-versions.outputs.matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Get test versions
+        id: get-test-versions
+        run: |
+          echo "matrix=$(cat .python-versions | jq -R -s -c 'split("\n")')" >> $GITHUB_OUTPUT
+
 
       - name: Setup Python with Poetry
         uses: ./.github/actions/setup-python-poetry

@@ -5,9 +5,10 @@ description = ""
 authors = [
     {name = "Michael Ellis",email = "michaelellis003@gmail.com"}
 ]
-license = {text = "Apache"}
+license = "Apache-2.0"
+license-files = { paths = ["LICENSE"] }
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.10" # Update this when changing .python-versions
 dependencies = [
 ]
 
@@ -22,12 +23,9 @@ requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
-# Set the maximum line length to 79.
+target-version = "py310" # Update this when changing .python-versions
 line-length = 79
 indent-width = 4
-
-# Assume Python 3.10
-target-version = "py310"
 
 [tool.ruff.lint]
 select = [
