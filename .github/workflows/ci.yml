@@ -19,7 +19,7 @@ jobs:
         id: get-versions
         run: |
           echo "max_version=$(tail -n 1 .python-versions)" >> $GITHUB_OUTPUT
-          echo "matrix=$(cat .python-versions | jq -R -s -c 'split("\n")')" >> $GITHUB_OUTPUT
+          echo "matrix={\"python-version\": $(cat .python-versions | jq -R -s -c 'split("\n")')}" >> $GITHUB_OUTPUT
 
   ruff-lint-and-format:
     needs: get-python-versions
@@ -41,8 +41,7 @@ jobs:
     needs: [get-python-versions, ruff-lint-and-format]
     strategy:
       fail-fast: false
-      matrix:
-        python-version: ${{ needs.get-python-versions.outputs.matrix }}
+      matrix: ${{ fromJson(needs.get-python-versions.outputs.matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
