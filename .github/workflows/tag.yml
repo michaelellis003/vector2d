@@ -1,5 +1,6 @@
 name: Tag on Merge to Main
-
+permissions:
+ contents: write
 on:
     pull_request:
         branches:
