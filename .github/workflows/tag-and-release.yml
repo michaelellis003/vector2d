@@ -36,6 +36,7 @@ jobs:
         - name: Check if tag already exists
           id: check_tag
           run: |
+            git fetch --tags  # Ensure we have the latest tags from the remote
             if git rev-parse "v${VERSION}" >/dev/null 2>&1; then
               echo "::error::Tag v${VERSION} already exists on GitHub. Please bump the version in pyproject.toml."
               exit 1
